@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Grade 12 Math Practice Quiz (MCQ)</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:0;background:#f6f7fb}
+  .wrap{max-width:980px;margin:0 auto;padding:24px}
+  .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  h1,h2{margin:0 0 10px}
+  .muted{color:#555;line-height:1.5}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{border:0;border-radius:10px;padding:12px 16px;cursor:pointer;background:#1f6feb;color:#fff;font-weight:700}
+  .btn.gray{background:#6e7781}
+  .btn.secondary{background:#2ea043}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .choice{width:100%;text-align:left;padding:12px;border:1px solid #d0d7de;border-radius:10px;background:#fff;cursor:pointer;margin:8px 0;font-size:16px}
+  .choice:hover{background:#f0f6ff}
+  .choice.correct{border-color:#2ea043;background:#ecfdf3}
+  .choice.wrong{border-color:#cf222e;background:#fff1f2}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-weight:800;font-size:13px}
+  .feedback{margin-top:14px;padding:12px;border-radius:10px;display:none}
+  .feedback.good{background:#ecfdf3;border:1px solid #2ea043}
+  .feedback.bad{background:#fff1f2;border:1px solid #cf222e}
+  .progress{width:100%;height:10px;background:#eaeef2;border-radius:999px;overflow:hidden}
+  .progress>div{height:100%;width:0%;background:#1f6feb}
+  .tiny{font-size:13px;color:#555;margin-top:10px;line-height:1.4}
+  .math{font-family:"Times New Roman",Times,serif}
+  input{padding:10px;border-radius:10px;border:1px solid #d0d7de}
+  .note{background:#f6f7fa;border:1px solid #eaeef2;padding:10px;border-radius:10px}
+</style>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card" id="screen-welcome">
+    <h1>Welcome to Grade 12 Practice ✅</h1>
+    <p class="muted">
+      You will answer <b><span id="totalCount"></span> multiple-choice questions</b>, one at a time.
+      After you click an answer, you will see whether you are correct, the correct answer, and why.
+    </p>
+
+    <div style="margin:14px 0;">
+      <label><b>Your name:</b></label><br/>
+      <input id="studentName" type="text" placeholder="Type your name" />
+      <div class="tiny">Your score will be shown at the end.</div>
+    </div>
+
+    <div style="margin:14px 0;">
+      <label><b>Start from question number:</b></label><br/>
+      <input id="startQ" type="number" min="1" value="1" style="width:110px;" />
+      <div class="tiny">Useful if you want to review a specific section without clicking through everything.</div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="startBtn">Start Practice</button>
+    </div>
+
+    <div class="tiny note" style="margin-top:14px;">
+      Tip: Some questions use radians. Decimals are acceptable where shown.
+    </div>
+  </div>
+
+  <div class="card" id="screen-quiz" style="display:none;">
+    <div class="row" style="justify-content:space-between;gap:10px;">
+      <span class="pill" id="pillProgress">Question 1</span>
+      <span class="pill">Score: <span id="scoreNow">0</span></span>
+    </div>
+    <div class="progress" aria-label="progress bar"><div id="progressBar"></div></div>
+
+    <h2 style="margin-top:16px;" id="qText" class="math"></h2>
+    <div id="choices"></div>
+
+    <div id="feedback" class="feedback">
+      <div><b id="fbTitle"></b></div>
+      <div class="tiny" id="fbExplain" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="row" style="margin-top:16px;">
+      <button class="btn gray" id="prevBtn">Previous</button>
+      <button class="btn" id="nextBtn" disabled>Next</button>
+    </div>
+
+    <p class="tiny">Rule: You must pick an answer to unlock “Next”. Answers are locked after the first click.</p>
+  </div>
+
+  <div class="card" id="screen-result" style="display:none;">
+    <h1>Congratulations 🎉</h1>
+    <p class="muted" id="finalLine"></p>
+    <p class="muted"><b>Please take a screenshot of this page and send it to your teacher.</b></p>
+    <div class="row" style="margin-top:14px;">
+      <button class="btn secondary" id="restartBtn">Restart</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------- Question bank (unshuffled) ----------
+const rawQuiz = [{"q": "Q1. For \\(f(x)=\\dfrac{1}{x-2}\\), the vertical asymptote is:", "a": ["\\(x=2\\)", "\\(y=2\\)", "\\(x=0\\)", "\\(y=0\\)"], "c": 0, "w": "Vertical asymptote occurs where the denominator is zero: \\(x-2=0\\Rightarrow x=2\\)."}, {"q": "Q2. For \\(f(x)=\\dfrac{1}{x+5}\\), the horizontal asymptote is:", "a": ["\\(y=0\\)", "\\(x=0\\)", "\\(y=5\\)", "\\(x=-5\\)"], "c": 0, "w": "For \\(\\frac{1}{\\text{linear}}\\), as \\(|x|\\to\\infty\\), \\(f(x)\\to 0\\). So horizontal asymptote is \\(y=0\\)."}, {"q": "Q3. The domain restriction for \\(f(x)=\\dfrac{1}{2x-6}\\) is:", "a": ["\\(x\\neq 3\\)", "\\(x\\neq -3\\)", "\\(x\\neq 6\\)", "\\(x\\neq 0\\)"], "c": 0, "w": "Denominator cannot be 0: \\(2x-6=0\\Rightarrow x=3\\)."}, {"q": "Q4. How many invariant points exist between \\(y=\\dfrac{1}{x}\\) and \\(y=\\dfrac{1}{x-2}\\)?", "a": ["Two", "One", "None", "Infinitely many"], "c": 2, "w": "Invariant points would satisfy both equations: \\(\\frac{1}{x}=\\frac{1}{x-2}\\Rightarrow x=x-2\\), impossible. So there are no invariant points."}, {"q": "Q5. The x-intercepts of \\(f(x)=\\dfrac{1}{x-4}\\) are:", "a": ["None", "\\(x=4\\)", "\\(x=0\\)", "\\(x=-4\\)"], "c": 0, "w": "A fraction equals 0 only if the numerator is 0. Here the numerator is 1, so there are no x-intercepts."}, {"q": "Q6. The range of \\(g(x)=\\dfrac{1}{x^2}\\) is:", "a": ["\\(y>0\\)", "\\(y\\ge 0\\)", "\\(y\\le 0\\)", "All real numbers"], "c": 0, "w": "For \\(x\\neq 0\\), \\(x^2>0\\) so \\(\\dfrac{1}{x^2}>0\\). The function never equals 0, so the range is \\(y>0\\)."}, {"q": "Q7. Vertical asymptotes of \\(g(x)=\\dfrac{1}{x^2-9}\\) are:", "a": ["\\(x=-3\\) and \\(x=3\\)", "\\(y=-3\\) and \\(y=3\\)", "\\(x=-9\\) and \\(x=9\\)", "No vertical asymptotes"], "c": 0, "w": "Set denominator to zero: \\(x^2-9=0\\Rightarrow (x-3)(x+3)=0\\Rightarrow x=\\pm 3\\)."}, {"q": "Q8. For \\(h(x)=\\dfrac{1}{(x-1)^2}\\), the sign of \\(h(x)\\) for all \\(x\\neq 1\\) is:", "a": ["Always positive", "Always negative", "Sometimes zero", "Both positive and negative"], "c": 0, "w": "A square is positive for \\(x\\neq 1\\), so the reciprocal is positive."}, {"q": "Q9. How many x-intercepts are there for \\(y=\\dfrac{1}{x^2-4x+5}\\)?", "a": ["0", "1", "2", "Infinitely many"], "c": 0, "w": "A reciprocal with numerator 1 can never equal 0, so it has 0 x-intercepts."}, {"q": "Q10. How many vertical asymptotes are there for \\(y=\\dfrac{1}{x^2-4x+5}\\)?", "a": ["0", "1", "2", "Infinitely many"], "c": 0, "w": "\\(x^2-4x+5=(x-2)^2+1\\) is never 0, so there are no vertical asymptotes."}, {"q": "Q11. How many horizontal asymptotes does \\(y=\\dfrac{1}{x^2-4x+5}\\) have?", "a": ["1", "0", "2", "Infinitely many"], "c": 0, "w": "Degree of denominator (2) > degree of numerator (0), so \\(y\\to 0\\) as \\(|x|\\to\\infty\\). Horizontal asymptote: \\(y=0\\) (one)."}, {"q": "Q12. For \\(y=\\dfrac{1}{x^2-1}\\), how many vertical asymptotes are there?", "a": ["2", "1", "0", "Infinitely many"], "c": 0, "w": "Denominator 0 when \\(x^2-1=0\\Rightarrow x=\\pm 1\\). Two vertical asymptotes."}, {"q": "Q13. For \\(y=\\dfrac{1}{x^2-1}\\), how many x-intercepts are there?", "a": ["0", "1", "2", "Infinitely many"], "c": 0, "w": "A reciprocal function with numerator 1 never equals 0, so 0 x-intercepts."}, {"q": "Q14. Which statement is true for \\(y=\\dfrac{1}{x^2+4x+4}\\)?", "a": ["There is 1 vertical asymptote", "There are 2 vertical asymptotes", "There are no vertical asymptotes", "There is a horizontal asymptote \\(y=1\\)"], "c": 0, "w": "Denominator \\(x^2+4x+4=(x+2)^2\\) equals 0 at \\(x=-2\\), giving one vertical asymptote \\(x=-2\\)."}, {"q": "Q15. For \\(y=\\dfrac{1}{x}\\), the graph has (select the best description):", "a": ["Two branches in Quadrants I and III", "Two branches in Quadrants II and IV", "A straight line through origin", "A parabola opening up"], "c": 0, "w": "When \\(x>0\\), \\(y>0\\) (Quadrant I). When \\(x<0\\), \\(y<0\\) (Quadrant III)."}, {"q": "Q16. Convert \\(150^\\circ\\) to radians (decimal).", "a": ["2.62", "2.36", "3.14", "1.57"], "c": 0, "w": "\\(150^\\circ\\times \\pi/180^\\circ = 5\\pi/6 \\approx 2.62\\)."}, {"q": "Q17. Convert \\(2.09\\) rad to degrees (nearest degree).", "a": ["120°", "110°", "100°", "90°"], "c": 0, "w": "Degrees \\(=2.09\\times 180/\\pi\\approx 120^\\circ\\)."}, {"q": "Q18. The amplitude of \\(y=3\\sin x\\) is:", "a": ["3", "1/3", "6", "2π"], "c": 0, "w": "Amplitude is \\(|a|\\) for \\(y=a\\sin x\\)."}, {"q": "Q19. The period of \\(y=\\sin(2x)\\) is:", "a": ["\\(\\pi\\)", "\\(2\\pi\\)", "\\(4\\pi\\)", "\\(\\pi/2\\)"], "c": 0, "w": "Period \\(=2\\pi/|b|=2\\pi/2=\\pi\\)."}, {"q": "Q20. The period of \\(y=2\\sin(0.5x)\\) is:", "a": ["\\(4\\pi\\)", "\\(\\pi\\)", "\\(2\\pi\\)", "\\(8\\pi\\)"], "c": 0, "w": "Period \\(=2\\pi/0.5=4\\pi\\)."}, {"q": "Q21. The center line of \\(y=\\sin x + 4\\) is:", "a": ["\\(y=4\\)", "\\(y=0\\)", "\\(x=4\\)", "\\(x=0\\)"], "c": 0, "w": "Vertical shift +4 moves midline from \\(y=0\\) to \\(y=4\\)."}, {"q": "Q22. For \\(y=-2\\sin x + 1\\), the maximum value is:", "a": ["3", "1", "-1", "-3"], "c": 0, "w": "Midline is 1 and amplitude is 2, so max = \\(1+2=3\\)."}, {"q": "Q23. For \\(y=2\\sin x - 1\\), the minimum value is:", "a": ["-3", "-1", "1", "3"], "c": 0, "w": "Min = midline - amplitude = \\(-1-2=-3\\)."}, {"q": "Q24. For \\(y=\\sin(x-\\pi/3)\\), the horizontal shift is:", "a": ["Right \\(\\pi/3\\)", "Left \\(\\pi/3\\)", "Up \\(\\pi/3\\)", "Down \\(\\pi/3\\)"], "c": 0, "w": "\\(x-c\\) shifts right by \\(c\\)."}, {"q": "Q25. For \\(y=4\\cos(3(x+\\pi/6))\\), the period is:", "a": ["\\(2\\pi/3\\)", "\\(\\pi/3\\)", "\\(3\\pi\\)", "\\(2\\pi\\)"], "c": 0, "w": "b=3 so period \\(=2\\pi/3\\)."}, {"q": "Q26. For \\(y=4\\cos(3(x+\\pi/6))\\), the phase shift is:", "a": ["Left \\(\\pi/6\\)", "Right \\(\\pi/6\\)", "Left \\(\\pi/18\\)", "Right \\(\\pi/18\\)"], "c": 0, "w": "Inside is \\(x+\\pi/6\\), so shift left \\(\\pi/6\\)."}, {"q": "Q27. A sine graph has maximum 7 and minimum 1. Its amplitude is:", "a": ["3", "4", "6", "8"], "c": 0, "w": "Amplitude \\(=(7-1)/2=3\\)."}, {"q": "Q28. Same graph as Q27 has center line:", "a": ["\\(y=4\\)", "\\(y=3\\)", "\\(y=7\\)", "\\(y=1\\)"], "c": 0, "w": "Center line \\(=(7+1)/2=4\\)."}, {"q": "Q29. A trig graph completes 3 cycles from \\(x=0\\) to \\(x=6\\pi\\). The period is:", "a": ["\\(2\\pi\\)", "\\(\\pi\\)", "\\(3\\pi\\)", "\\(6\\pi\\)"], "c": 0, "w": "Period = total length / cycles = \\(6\\pi/3=2\\pi\\)."}, {"q": "Q30. Simplify: \\(\\sin^2 x + \\cos^2 x\\)", "a": ["1", "0", "\\(\\sin x\\)", "\\(\\cos x\\)"], "c": 0, "w": "Pythagorean identity."}, {"q": "Q31. Simplify: \\(1+\\tan^2 x\\)", "a": ["\\(\\sec^2 x\\)", "\\(\\csc^2 x\\)", "1", "\\(\\tan x\\)"], "c": 0, "w": "Identity: \\(1+\\tan^2 x=\\sec^2 x\\)."}, {"q": "Q32. If \\(\\sin x=3/5\\) and \\(x\\) is in Quadrant II, then \\(\\cos x\\) is:", "a": ["-4/5", "4/5", "-3/5", "3/5"], "c": 0, "w": "3-4-5 triangle; cos negative in QII."}, {"q": "Q33. Solve for \\(0^\\circ\\le x<360^\\circ\\): \\(\\sin x=0\\)", "a": ["0°, 180°", "90°, 270°", "0° only", "180° only"], "c": 0, "w": "Sine is 0 on x-axis."}, {"q": "Q34. Solve for \\(0^\\circ\\le x<360^\\circ\\): \\(\\cos x=-1/2\\)", "a": ["120°, 240°", "60°, 300°", "150°, 210°", "30°, 330°"], "c": 0, "w": "Reference 60°, cos negative in QII and QIII."}, {"q": "Q35. Solve for \\([0,2\\pi)\\): \\(\\tan x=1\\)", "a": ["\\(\\pi/4,\\ 5\\pi/4\\)", "\\(\\pi/2,\\ 3\\pi/2\\)", "\\(\\pi/6,\\ 7\\pi/6\\)", "\\(\\pi/3,\\ 4\\pi/3\\)"], "c": 0, "w": "tan=1 at \\(\\pi/4\\) plus \\(\\pi\\)."}, {"q": "Q36. Solve for \\([0,2\\pi)\\): \\(2\\sin x=1\\)", "a": ["\\(\\pi/6,\\ 5\\pi/6\\)", "\\(\\pi/3,\\ 2\\pi/3\\)", "\\(7\\pi/6,\\ 11\\pi/6\\)", "\\(\\pi/4,\\ 3\\pi/4\\)"], "c": 0, "w": "sin x = 1/2."}, {"q": "Q37. Solve for \\([0,2\\pi)\\): \\(\\cos(2x)=0\\)", "a": ["\\(\\pi/4,\\ 3\\pi/4,\\ 5\\pi/4,\\ 7\\pi/4\\)", "\\(\\pi/2,\\ \\pi,\\ 3\\pi/2\\)", "\\(0,\\ \\pi\\)", "\\(\\pi/8,\\ 3\\pi/8,\\ 5\\pi/8,\\ 7\\pi/8\\)"], "c": 0, "w": "\\(2x=\\pi/2,3\\pi/2,5\\pi/2,7\\pi/2\\) in \\([0,4\\pi)\\). Divide by 2."}, {"q": "Q38. Solve for \\(0^\\circ\\le x<360^\\circ\\): \\(2\\cos x+1=0\\)", "a": ["120°, 240°", "60°, 300°", "90°, 270°", "45°, 225°"], "c": 0, "w": "cos x = -1/2."}, {"q": "Q39. Which identity is correct?", "a": ["\\(1-\\sin^2 x=\\cos^2 x\\)", "\\(1-\\cos^2 x=\\sec^2 x\\)", "\\(\\sin x/\\cos x=\\cos x/\\sin x\\)", "\\(\\tan^2 x=1-\\sec^2 x\\)"], "c": 0, "w": "Rearrange \\(\\sin^2 x+\\cos^2 x=1\\)."}, {"q": "Q40. Solve for \\(0^\\circ\\le x<360^\\circ\\): \\(\\sin x=\\cos x\\)", "a": ["45°, 225°", "135°, 315°", "0°, 180°", "90°, 270°"], "c": 0, "w": "sin=cos => tan=1."}, {"q": "Q41. Solve for \\([0,2\\pi)\\): \\(\\sin x+\\cos x=0\\)", "a": ["\\(3\\pi/4,\\ 7\\pi/4\\)", "\\(\\pi/4,\\ 5\\pi/4\\)", "\\(\\pi/2,\\ 3\\pi/2\\)", "\\(\\pi/6,\\ 7\\pi/6\\)"], "c": 0, "w": "sin = -cos => tan=-1."}, {"q": "Q42. Solve for \\([0,2\\pi)\\): \\(\\sin(3x)=0\\)", "a": ["\\(0,\\ \\pi/3,\\ 2\\pi/3,\\ \\pi,\\ 4\\pi/3,\\ 5\\pi/3\\)", "\\(0,\\ \\pi,\\ 2\\pi\\)", "\\(\\pi/3,\\ \\pi\\)", "\\(\\pi/6,\\ \\pi/2,\\ 5\\pi/6\\)"], "c": 0, "w": "3x = kπ. In [0,2π), k=0..5 gives 6 solutions."}, {"q": "Q43. Solve for \\(0^\\circ\\le x<360^\\circ\\): \\(\\sin x=-\\sin 20^\\circ\\)", "a": ["200°, 340°", "20°, 160°", "160°, 200°", "340° only"], "c": 0, "w": "Solutions: x=180°+20°=200° and x=360°-20°=340°."}, {"q": "Q44. Arithmetic sequence: \\(a_1=5\\), \\(d=3\\). Find \\(a_6\\).", "a": ["20", "18", "23", "14"], "c": 0, "w": "a_n=a_1+(n-1)d => a_6=5+5·3=20."}, {"q": "Q45. Arithmetic sequence: \\(a_1=12\\), \\(d=-2\\). Find \\(a_{10}\\).", "a": ["-6", "-8", "-10", "0"], "c": 0, "w": "a_10=12+9(-2)= -6."}, {"q": "Q46. Geometric sequence: \\(a_1=3\\), \\(r=2\\). Find \\(a_7\\).", "a": ["192", "96", "384", "48"], "c": 0, "w": "a_7=3·2^6=3·64=192."}, {"q": "Q47. Geometric sequence: \\(a_1=81\\), \\(r=\\frac{1}{3}\\). Find \\(a_5\\).", "a": ["1", "3", "9", "27"], "c": 0, "w": "a_5=81(1/3)^4=1."}, {"q": "Q48. Arithmetic series: \\(a_1=4\\), \\(d=2\\). Find \\(S_{10}\\).", "a": ["130", "120", "110", "100"], "c": 0, "w": "a_10=22. S_10=10/2(4+22)=130."}, {"q": "Q49. Geometric series: \\(a=5\\), \\(r=2\\). Find \\(S_6\\).", "a": ["315", "310", "160", "155"], "c": 0, "w": "S_6 = a(r^n-1)/(r-1)=5(64-1)=315."}, {"q": "Q50. Geometric series: \\(9+3+1+\\dots\\). Find \\(S_\\infty\\).", "a": ["13.5", "12", "10", "9"], "c": 0, "w": "r=1/3. S∞=9/(1-1/3)=13.5."}, {"q": "Q51. For the geometric series \\(6+2+\\frac{2}{3}+\\dots\\), the common ratio \\(r\\) is:", "a": ["1/3", "2/3", "3", "1/2"], "c": 0, "w": "r=2/6=1/3 (and (2/3)/2=1/3)."}, {"q": "Q52. Geometric series has \\(a=12\\), \\(r=0.25\\). Find \\(S_\\infty\\).", "a": ["16", "12.5", "15", "48"], "c": 0, "w": "S∞=a/(1-r)=12/0.75=16."}, {"q": "Q53. Arithmetic sequence has \\(a_1=7\\) and \\(a_{20}=64\\). Find \\(d\\).", "a": ["3", "2", "4", "5"], "c": 0, "w": "64=7+19d => d=3."}, {"q": "Q54. Geometric sequence has \\(a_1=2\\), \\(r=1.5\\). Find \\(a_5\\).", "a": ["10.125", "6.75", "7.5", "5.0625"], "c": 0, "w": "a_5=2(1.5)^4=2·5.0625=10.125."}, {"q": "Q55. Arithmetic series has \\(a_1=10\\), \\(d=5\\). Find \\(S_8\\).", "a": ["180", "200", "160", "220"], "c": 3, "w": "a_8=10+7·5=45. S_8=8/2(10+45)=4·55=220."}, {"q": "Q56. Choosing a president and vice president from 12 students is a:", "a": ["Permutation (order matters)", "Combination (order doesn't matter)", "Census", "Sample"], "c": 0, "w": "Roles are different so order matters ⇒ permutation situation."}, {"q": "Q57. Choosing 3 students from 10 for a committee is:", "a": ["\\(\\binom{10}{3}\\)", "\\(10P3\\)", "\\(\\binom{3}{10}\\)", "\\(3P10\\)"], "c": 0, "w": "Order doesn't matter for a committee ⇒ combinations \\(\\binom{10}{3}\\)."}, {"q": "Q58. Evaluate \\(8P2\\).", "a": ["56", "28", "64", "16"], "c": 0, "w": "8P2 = 8×7 = 56."}, {"q": "Q59. Evaluate \\(9C2\\).", "a": ["36", "72", "18", "9"], "c": 0, "w": "9C2 = 9×8/2 = 36."}, {"q": "Q60. A 4-digit code uses digits 0–9 and repeats are allowed. Number of codes is:", "a": ["\\(10^4\\)", "\\(10P4\\)", "\\(10C4\\)", "\\(4^{10}\\)"], "c": 0, "w": "10 choices per position ⇒ 10^4."}, {"q": "Q61. In \\((2x-3)^5\\), the coefficient of \\(x^5\\) is:", "a": ["32", "-32", "243", "-243"], "c": 0, "w": "Only (2x)^5 produces x^5 term ⇒ coefficient 2^5=32."}, {"q": "Q62. In \\((x+2)^6\\), the coefficient of \\(x^4\\) is:", "a": ["60", "30", "15", "120"], "c": 0, "w": "Choose 2 twos: C(6,2)·2^2 = 15·4 = 60."}, {"q": "Q63. A fair coin is flipped 5 times. Probability of exactly 3 heads is:", "a": ["10/32", "5/32", "16/32", "1/2"], "c": 0, "w": "C(5,3)(1/2)^5 = 10/32."}, {"q": "Q64. Which method is a Simple Random Sample (SRS)?", "a": ["Every member has an equal chance of selection", "Choose every 10th person on a list", "Choose whole classes as groups", "Split into groups then sample proportionally"], "c": 0, "w": "In SRS, each individual has an equal chance (e.g., using a random number generator)."}, {"q": "Q65. Selecting every 10th student from an ordered list is:", "a": ["Systematic sampling", "Stratified sampling", "Cluster sampling", "Voluntary response"], "c": 0, "w": "Systematic sampling chooses every k-th individual after a start point."}, {"q": "Q66. Surveying all students in the school is a:", "a": ["Census", "Sample", "Experiment", "Observation"], "c": 0, "w": "A census collects data from every member of the population."}, {"q": "Q67. A researcher assigns students to two groups (caffeine vs no caffeine) and measures test scores. This is a(n):", "a": ["Experiment", "Observational study", "Census", "Stratified sample"], "c": 0, "w": "An experiment involves assigning treatments/conditions."}, {"q": "Q68. A scatter plot with points tightly clustered around an upward-sloping line shows:", "a": ["Strong positive correlation", "Weak positive correlation", "Strong negative correlation", "No correlation"], "c": 0, "w": "Tight upward trend indicates strong positive correlation."}, {"q": "Q69. Using a regression line to predict a value between existing x-values is called:", "a": ["Interpolation", "Extrapolation", "Randomization", "Stratification"], "c": 0, "w": "Interpolation is prediction within the observed data range."}, {"q": "Q70. Using a regression line to predict a value beyond the largest observed x-value is called:", "a": ["Extrapolation", "Interpolation", "Causation", "Sampling error"], "c": 0, "w": "Extrapolation is prediction outside the observed data range."}];
+
+// ---------- Deterministic shuffle (so answers aren't all A) ----------
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
+function hashString(s){
+  let h=2166136261>>>0;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return h>>>0;
+}
+function shuffleInPlace(arr, rand){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(rand()* (i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+}
+
+// We'll build the final quiz once, at start, using student's name as part of seed.
+let quiz = []; // each item: {q, a, c, w}
+
+function buildQuiz(seedStr){
+  const rand = mulberry32(hashString(seedStr));
+  quiz = rawQuiz.map(item=>{
+    const opts = item.a.map((text, idx)=>({text, idx}));
+    shuffleInPlace(opts, rand); // shuffle choices
+    const newCorrect = opts.findIndex(o=>o.idx===item.c);
+    return { q:item.q, a:opts.map(o=>o.text), c:newCorrect, w:item.w };
+  });
+}
+
+// ---------- App state ----------
+function typesetMath(){
+  try{
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetClear();
+      MathJax.typesetPromise();
+    }
+  }catch(e){}
+}
+
+let state = { idx:0, score:0, answers:[], locked:[], name:"" };
+const $ = (id)=>document.getElementById(id);
+
+function show(screenId){
+  ["screen-welcome","screen-quiz","screen-result"].forEach(s=>$(s).style.display="none");
+  $(screenId).style.display="block";
+}
+
+function updateProgress(){
+  $("pillProgress").textContent = `Question ${state.idx+1} of ${quiz.length}`;
+  $("scoreNow").textContent = state.score;
+  $("progressBar").style.width = `${Math.round((state.idx/quiz.length)*100)}%`;
+}
+
+function showFeedback(chosenIndex){
+  const item = quiz[state.idx];
+  const correctIndex = item.c;
+  const ok = chosenIndex === correctIndex;
+
+  $("feedback").style.display = "block";
+  $("feedback").className = "feedback " + (ok ? "good" : "bad");
+  $("fbTitle").textContent = ok ? "Correct ✅" : "Incorrect ❌";
+  $("fbExplain").innerHTML =
+    `<div><b>Correct answer:</b> ${String.fromCharCode(65+correctIndex)}) <span class="math">${item.a[correctIndex]}</span></div>
+     <div style="margin-top:8px;"><b>Why:</b> <span class="math">${item.w}</span></div>`;
+  typesetMath();
+}
+
+function renderQuestion(){
+  const item = quiz[state.idx];
+  $("qText").innerHTML = item.q;
+  $("choices").innerHTML = "";
+  $("feedback").style.display = "none";
+  $("nextBtn").disabled = state.answers[state.idx] === null;
+
+  item.a.forEach((choiceHtml, i)=>{
+    const btn = document.createElement("button");
+    btn.className = "choice math";
+    btn.innerHTML = String.fromCharCode(65+i) + ") " + choiceHtml;
+
+    if(state.answers[state.idx] !== null){
+      const chosen = state.answers[state.idx];
+      if(i === item.c) btn.classList.add("correct");
+      if(i === chosen && chosen !== item.c) btn.classList.add("wrong");
+      btn.disabled = true;
+      $("nextBtn").disabled = false;
+      showFeedback(chosen);
+    }
+
+    btn.addEventListener("click", ()=>handleAnswer(i));
+    $("choices").appendChild(btn);
+  });
+
+  $("prevBtn").disabled = state.idx === 0;
+  updateProgress();
+  typesetMath();
+}
+
+function handleAnswer(choiceIndex){
+  if(state.locked[state.idx]) return;
+  const item = quiz[state.idx];
+  state.answers[state.idx] = choiceIndex;
+  state.locked[state.idx] = true;
+  if(choiceIndex === item.c) state.score += 1;
+  renderQuestion();
+}
+
+function next(){
+  if(state.answers[state.idx] === null) return;
+  if(state.idx < quiz.length - 1){
+    state.idx += 1;
+    renderQuestion();
+  }else{
+    finish();
+  }
+}
+
+function prev(){
+  if(state.idx > 0){
+    state.idx -= 1;
+    renderQuestion();
+  }
+}
+
+function escapeText(str){
+  return (str ?? "").toString().replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+function finish(){
+  $("progressBar").style.width = "100%";
+  const total = quiz.length;
+  const pct = Math.round((state.score/total)*100);
+  const name = escapeText(state.name || "Student");
+  $("finalLine").innerHTML = `Well done <b>${name}</b>! Your score is <b>${state.score} / ${total}</b> (${pct}%).`;
+  show("screen-result");
+}
+
+// ---------- Wiring ----------
+document.getElementById("totalCount").textContent = rawQuiz.length;
+
+$("startBtn").addEventListener("click", ()=>{
+  state.name = $("studentName").value.trim();
+  const startNumRaw = parseInt($("startQ").value, 10);
+  const startIdx = Number.isFinite(startNumRaw) ? Math.max(1, Math.min(rawQuiz.length, startNumRaw)) - 1 : 0;
+
+  // Build quiz with shuffled answer positions (seed includes name to keep stable per student)
+  buildQuiz((state.name || "student") + "|grade12|v3");
+
+  state.idx = startIdx;
+  state.score = 0;
+  state.answers = Array(quiz.length).fill(null);
+  state.locked = Array(quiz.length).fill(false);
+
+  show("screen-quiz");
+  renderQuestion();
+});
+
+$("nextBtn").addEventListener("click", next);
+$("prevBtn").addEventListener("click", prev);
+$("restartBtn").addEventListener("click", ()=>location.reload());
+</script>
+</body>
+</html>
