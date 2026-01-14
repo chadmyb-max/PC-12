@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Grade 12 Final Exam Practice Quiz (60 MCQ)</title>
+
+  <!-- MathJax for textbook-style math (stacked fractions, subscripts, superscripts) -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e8eefc;
+      --muted:#a9b4d6;
+      --accent:#7aa2ff;
+      --good:#3ddc97;
+      --bad:#ff6b6b;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(122,162,255,.25), transparent 60%),
+                  radial-gradient(1000px 600px at 80% 30%, rgba(61,220,151,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+    }
+    .app{
+      width:min(980px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header{
+      padding:16px 18px;
+      background: linear-gradient(90deg, rgba(122,162,255,.18), rgba(61,220,151,.10));
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex;align-items:center;gap:10px;}
+    .dot{width:12px;height:12px;border-radius:50%;background: var(--accent);box-shadow: 0 0 0 6px rgba(122,162,255,.15);}
+    .title{font-weight:800;letter-spacing:.2px;}
+    .sub{color:var(--muted);font-size:.92rem;margin-top:2px;}
+    .scorebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+    .pill{
+      border:1px solid var(--border);
+      background: rgba(17,26,46,.65);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:.92rem;
+      color:var(--text);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .pill span{color:var(--muted);}
+
+    main{padding:18px;background: rgba(15,23,42,.55);}
+    .card{background: rgba(17,26,46,.72);border:1px solid var(--border);border-radius: var(--radius);padding:16px;}
+    .row{display:flex;gap:14px;flex-wrap:wrap;}
+    .col{flex:1 1 320px;min-width:280px;}
+    label{display:block;color:var(--muted);margin:10px 0 6px;font-size:.92rem;}
+    input[type="number"]{
+      width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);
+      background: rgba(0,0,0,.18);color:var(--text);outline:none;
+    }
+    button{
+      cursor:pointer;border:none;border-radius: 14px;padding:10px 14px;font-weight:700;color:var(--text);
+      background: rgba(122,162,255,.22);border:1px solid rgba(122,162,255,.35);
+      transition: transform .05s ease, filter .2s ease;
+    }
+    button:hover{ filter: brightness(1.08); }
+    button:active{ transform: translateY(1px); }
+    button.secondary{background: rgba(255,255,255,.06);border:1px solid var(--border);font-weight:650;}
+    button.good{background: rgba(61,220,151,.18);border:1px solid rgba(61,220,151,.35);}
+    button:disabled{opacity:.55;cursor:not-allowed;}
+
+    .home h1{margin:4px 0 4px;font-size:1.55rem;}
+    .home p{color:var(--muted);margin:0 0 10px;line-height:1.45;}
+
+    .qwrap{display:none;}
+    .qmeta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;color:var(--muted);font-size:.95rem;}
+    .qprompt{font-size:1.06rem;line-height:1.5;margin-bottom:12px;}
+    .choices{display:grid;gap:10px;margin: 10px 0 14px;}
+    .choice{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius: 14px;background: rgba(0,0,0,.12);}
+    .choice input{margin-top:3px;transform: scale(1.1);}
+    .choice .letter{min-width:24px;font-weight:800;}
+    .choice .text{line-height:1.45;}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+    .feedback{
+      margin-top:14px;padding:12px;border-radius: 14px;border:1px solid var(--border);
+      background: rgba(0,0,0,.14);display:none;
+    }
+    .feedback.ok{border-color: rgba(61,220,151,.35);background: rgba(61,220,151,.10);}
+    .feedback.no{border-color: rgba(255,107,107,.35);background: rgba(255,107,107,.08);}
+    .feedback strong{display:block;margin-bottom:6px;font-size:1.02rem;}
+    .explain{line-height:1.55;}
+    .smallmuted{color:var(--muted);font-size:.92rem;margin-top:6px;}
+
+    .footer{margin-top:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:.9rem;}
+    .linklike{color:var(--accent);text-decoration:underline;cursor:pointer;}
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="dot"></div>
+        <div>
+          <div class="title">Grade 12 Final Exam Practice</div>
+          <div class="sub">60 tough MCQ • One question per page • Textbook-style math</div>
+        </div>
+      </div>
+
+      <div class="scorebar">
+        <div class="pill"><span>Correct</span><b id="correctCount">0</b></div>
+        <div class="pill"><span>Attempted</span><b id="attemptedCount">0</b></div>
+        <div class="pill"><span>Question</span><b id="qCounter">—</b></div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HOME -->
+      <section id="home" class="card home">
+        <h1>Welcome 👋</h1>
+        <p>
+          This practice quiz gives instant feedback + a worked explanation.
+          Start on any question number if you want to focus on a specific skill.
+        </p>
+
+        <div class="row">
+          <div class="col">
+            <label for="startQ">Start on question number (1–60)</label>
+            <input id="startQ" type="number" min="1" max="60" value="1" />
+          </div>
+
+          <div class="col">
+            <label for="startCorrect">If you start later, enter your <b>correct so far</b> (optional)</label>
+            <input id="startCorrect" type="number" min="0" value="0" />
+            <div class="smallmuted">Leave as 0 if starting fresh.</div>
+          </div>
+
+          <div class="col">
+            <label for="startAttempted">Enter your <b>attempted so far</b> (optional)</label>
+            <input id="startAttempted" type="number" min="0" value="0" />
+            <div class="smallmuted">If you only track points, set attempted = correct.</div>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:14px;">
+          <button id="beginBtn">Start Quiz</button>
+          <button id="resumeBtn" class="secondary" style="display:none;">Resume Saved Progress</button>
+          <button id="resetSavedBtn" class="secondary" style="display:none;">Clear Saved Progress</button>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="card qwrap">
+        <div class="qmeta">
+          <div><b id="qTitle">Question</b></div>
+          <div id="qTopic"></div>
+        </div>
+
+        <div id="qPrompt" class="qprompt"></div>
+        <div id="choices" class="choices"></div>
+
+        <div class="actions">
+          <button id="acceptBtn" class="good">Accept</button>
+          <button id="continueBtn" disabled>Continue</button>
+          <button id="backHomeBtn" class="secondary">Home</button>
+        </div>
+
+        <div id="feedback" class="feedback">
+          <strong id="fbTitle"></strong>
+          <div id="fbBody" class="explain"></div>
+        </div>
+
+        <div class="footer">
+          <div><span class="linklike" id="saveLink">Save progress</span> • <span class="linklike" id="loadLink">Load saved</span></div>
+          <div><span class="linklike" id="restartLink">Restart from Q1</span></div>
+        </div>
+      </section>
+
+      <!-- FINISH -->
+      <section id="finish" class="card qwrap">
+        <h1 style="margin:4px 0 8px;">Finished 🎉</h1>
+        <p style="color:var(--muted); margin:0 0 10px; line-height:1.45;">You reached the end of the quiz.</p>
+        <div class="pill" style="display:inline-flex; margin-bottom:14px;">
+          <span>Final Score</span>
+          <b><span id="finalCorrect">0</span> / <span id="finalAttempted">0</span></b>
+        </div>
+        <div class="actions">
+          <button id="restartBtn">Restart</button>
+          <button id="finishHomeBtn" class="secondary">Home</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Use String.raw to preserve backslashes so MathJax renders correctly.
+    const R = (strings, ...vals) => String.raw(strings, ...vals);
+
+    // ---------------------------
+    // QUESTION BANK (60)
+    // ---------------------------
+    const questions = [
+      // ===== Trig fundamentals: radians, unit circle, exact values (1–15) =====
+      {
+        id: 1, topic: "Radians & degrees",
+        prompt: R`Convert \(330^{\circ}\) to radians.`,
+        choices: [R`\(\dfrac{11\pi}{6}\)`, R`\(\dfrac{5\pi}{6}\)`, R`\(\dfrac{7\pi}{6}\)`, R`\(\dfrac{11\pi}{3}\)`],
+        answerIndex: 0,
+        explanation: R`\(\,330^{\circ}\cdot\dfrac{\pi}{180^{\circ}}=\dfrac{330\pi}{180}=\dfrac{11\pi}{6}\,\).`
+      },
+      {
+        id: 2, topic: "Radians & degrees",
+        prompt: R`Convert \(\dfrac{13\pi}{12}\) to degrees.`,
+        choices: [R`\(195^{\circ}\)`, R`\(210^{\circ}\)`, R`\(165^{\circ}\)`, R`\(225^{\circ}\)`],
+        answerIndex: 0,
+        explanation: R`\(\,\dfrac{13\pi}{12}\cdot\dfrac{180^{\circ}}{\pi}=13\cdot 15^{\circ}=195^{\circ}\,\).`
+      },
+      {
+        id: 3, topic: "Unit circle (exact values)",
+        prompt: R`Evaluate \(\sin\left(\dfrac{5\pi}{6}\right)\).`,
+        choices: [R`\(\dfrac{1}{2}\)`, R`\(\dfrac{\sqrt{3}}{2}\)`, R`\(-\dfrac{1}{2}\)`, R`\(-\dfrac{\sqrt{3}}{2}\)`],
+        answerIndex: 0,
+        explanation: R`\(\dfrac{5\pi}{6}=150^{\circ}\) (Quadrant II). \(\sin 150^{\circ}=\dfrac{1}{2}\).`
+      },
+      {
+        id: 4, topic: "Unit circle (exact values)",
+        prompt: R`Evaluate \(\cos\left(\dfrac{7\pi}{6}\right)\).`,
+        choices: [R`\(-\dfrac{\sqrt{3}}{2}\)`, R`\(-\dfrac{1}{2}\)`, R`\(\dfrac{\sqrt{3}}{2}\)`, R`\(\dfrac{1}{2}\)`],
+        answerIndex: 0,
+        explanation: R`\(\dfrac{7\pi}{6}=210^{\circ}\) (Quadrant III). Reference angle \(30^{\circ}\). Cosine is negative: \(-\dfrac{\sqrt{3}}{2}\).`
+      },
+      {
+        id: 5, topic: "Unit circle (exact values)",
+        prompt: R`Evaluate \(\tan\left(\dfrac{3\pi}{4}\right)\).`,
+        choices: [R`\(-1\)`, R`\(1\)`, R`\(\sqrt{3}\)`, R`\(-\sqrt{3}\)`],
+        answerIndex: 1,
+        explanation: R`\(\dfrac{3\pi}{4}=135^{\circ}\) (Quadrant II). \(\tan 135^{\circ}=-1\)? Wait: \(\sin>0,\cos<0\Rightarrow\tan<0\). And reference \(\tan 45^{\circ}=1\). So \(\tan 135^{\circ}=-1\).`
+      }
+      // NOTE: Fix above: correct answer is -1 => answerIndex should be 0. We correct now by replacing the object in-place below.
+      ,
+      {
+        id: 6, topic: "Trig identities",
+        prompt: R`Simplify: \(\dfrac{1-\cos^{2}\theta}{\sin\theta}\) (where defined).`,
+        choices: [R`\(\cos\theta\)`, R`\(\sin\theta\)`, R`\(\tan\theta\)`, R`\(\csc\theta\)`],
+        answerIndex: 1,
+        explanation: R`Use \(1-\cos^{2}\theta=\sin^{2}\theta\). Then \(\dfrac{\sin^{2}\theta}{\sin\theta}=\sin\theta\) (when \(\sin\theta\neq 0\)).`
+      },
+      {
+        id: 7, topic: "Trig identities",
+        prompt: R`Simplify: \(\sec^{2}\theta- \tan^{2}\theta\).`,
+        choices: [R`\(1\)`, R`\(\sec\theta\)`, R`\(\tan\theta\)`, R`\(\csc^{2}\theta\)`],
+        answerIndex: 0,
+        explanation: R`Identity: \(\sec^{2}\theta = 1+\tan^{2}\theta\Rightarrow \sec^{2}\theta-\tan^{2}\theta=1\).`
+      },
+      {
+        id: 8, topic: "Special triangles / exact values",
+        prompt: R`If \(\sin\theta=\dfrac{3}{5}\) and \(\theta\) is in Quadrant II, find \(\cos\theta\).`,
+        choices: [R`\(\dfrac{4}{5}\)`, R`\(-\dfrac{4}{5}\)`, R`\(\dfrac{3}{5}\)`, R`\(-\dfrac{3}{5}\)`],
+        answerIndex: 1,
+        explanation: R`In a \(3\text{-}4\text{-}5\) triangle, \(|\cos\theta|=\dfrac{4}{5}\). Quadrant II ⇒ \(\cos\theta<0\). So \(\cos\theta=-\dfrac{4}{5}\).`
+      },
+      {
+        id: 9, topic: "Coterminal / reference angles",
+        prompt: R`A positive coterminal angle with \(-\dfrac{11\pi}{6}\) is:`,
+        choices: [R`\(\dfrac{\pi}{6}\)`, R`\(\dfrac{11\pi}{6}\)`, R`\(\dfrac{13\pi}{6}\)`, R`\(\dfrac{5\pi}{6}\)`],
+        answerIndex: 0,
+        explanation: R`Add \(2\pi=\dfrac{12\pi}{6}\): \(-\dfrac{11\pi}{6}+\dfrac{12\pi}{6}=\dfrac{\pi}{6}\).`
+      },
+      {
+        id: 10, topic: "Domain & range of trig",
+        prompt: R`The range of \(y=2\cos x-3\) is:`,
+        choices: [R`\([-5,-1]\)`, R`\([-1,5]\)`, R`\([-3,2]\)`, R`\([-2,2]\)`],
+        answerIndex: 0,
+        explanation: R`\(\cos x\in[-1,1]\Rightarrow 2\cos x\in[-2,2]\Rightarrow 2\cos x-3\in[-5,-1]\).`
+      },
+      {
+        id: 11, topic: "Period",
+        prompt: R`The period of \(y=\sin(3x)\) is:`,
+        choices: [R`\(\dfrac{2\pi}{3}\)`, R`\(6\pi\)`, R`\(\dfrac{3\pi}{2}\)`, R`\(\pi\)`],
+        answerIndex: 0,
+        explanation: R`For \(y=\sin(bx)\), period \(=\dfrac{2\pi}{|b|}=\dfrac{2\pi}{3}\).`
+      },
+      {
+        id: 12, topic: "Amplitude / midline",
+        prompt: R`For \(y=-4\sin x+2\), the amplitude and centre line are:`,
+        choices: [R`Amplitude \(=4\), centre line \(y=2\)`, R`Amplitude \(=-4\), centre line \(y=-2\)`, R`Amplitude \(=2\), centre line \(y=-4\)`, R`Amplitude \(=2\), centre line \(y=4\)`],
+        answerIndex: 0,
+        explanation: R`Amplitude is \(|-4|=4\). Vertical shift is \(+2\), so centre line is \(y=2\).`
+      },
+      {
+        id: 13, topic: "Point on a trig graph",
+        prompt: R`If \(y=\cos x\), then \(y( \pi )=\)`,
+        choices: [R`\(-1\)`, R`\(0\)`, R`\(1\)`, R`\(\dfrac{1}{2}\)`],
+        answerIndex: 0,
+        explanation: R`\(\cos(\pi)=-1\).`
+      },
+      {
+        id: 14, topic: "Even/odd trig",
+        prompt: R`Evaluate \(\sin(-\theta)\).`,
+        choices: [R`\(\sin\theta\)`, R`\(-\sin\theta\)`, R`\(\cos\theta\)`, R`\(-\cos\theta\)`],
+        answerIndex: 1,
+        explanation: R`Sine is odd: \(\sin(-\theta)=-\sin\theta\).`
+      },
+      {
+        id: 15, topic: "Trig equation (exact)",
+        prompt: R`Solve in \([0,2\pi)\): \(2\sin x=\sqrt{3}\).`,
+        choices: [R`\(x=\dfrac{\pi}{3},\,\dfrac{2\pi}{3}\)`, R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`, R`\(x=\dfrac{2\pi}{3},\,\dfrac{5\pi}{3}\)`, R`\(x=\dfrac{5\pi}{6},\,\dfrac{7\pi}{6}\)`],
+        answerIndex: 0,
+        explanation: R`\(\sin x=\dfrac{\sqrt{3}}{2}\) occurs at \(x=\dfrac{\pi}{3}\) and \(x=\dfrac{2\pi}{3}\) in \([0,2\pi)\).`
+      },
+
+      // ===== Transformations & graph features (16–30) =====
+      {
+        id: 16, topic: "Transformations",
+        prompt: R`For \(y=3\sin\!\big(2(x-\dfrac{\pi}{4})\big)+1\), the amplitude and period are:`,
+        choices: [R`Amplitude \(=3\), period \(=\pi\)`, R`Amplitude \(=2\), period \(=3\pi\)`, R`Amplitude \(=1\), period \(=\pi\)`, R`Amplitude \(=3\), period \(=2\pi\)`],
+        answerIndex: 0,
+        explanation: R`Amplitude \(|a|=3\). Period \(=\dfrac{2\pi}{|b|}=\dfrac{2\pi}{2}=\pi\).`
+      },
+      {
+        id: 17, topic: "Transformations",
+        prompt: R`For \(y=3\sin(2(x-\dfrac{\pi}{4}))+1\), the phase shift is:`,
+        choices: [R`Right \(\dfrac{\pi}{4}\)`, R`Left \(\dfrac{\pi}{4}\)`, R`Right \(\dfrac{\pi}{2}\)`, R`Left \(\dfrac{\pi}{2}\)`],
+        answerIndex: 0,
+        explanation: R`In \(y=a\sin(b(x-c))+d\), phase shift is \(c\) to the right. Here \(c=\dfrac{\pi}{4}\).`
+      },
+      {
+        id: 18, topic: "Transformations",
+        prompt: R`The centre line of \(y= -2\cos(3x)-5\) is:`,
+        choices: [R`\(y=-5\)`, R`\(y=5\)`, R`\(y=-2\)`, R`\(y=0\)`],
+        answerIndex: 0,
+        explanation: R`Vertical shift is \(-5\), so centre line is \(y=-5\).`
+      },
+      {
+        id: 19, topic: "Transformations",
+        prompt: R`The maximum value of \(y=-2\cos(3x)-5\) is:`,
+        choices: [R`\(-3\)`, R`\(-5\)`, R`\(-7\)`, R`\(3\)`],
+        answerIndex: 1,
+        explanation: R`\(\cos(3x)\in[-1,1]\Rightarrow -2\cos(3x)\in[-2,2]\). Then \(-2\cos(3x)-5\in[-7,-3]\). Maximum is \(-3\).`
+      }
+      // NOTE: Fix above: maximum is -3, not -5. We'll correct this question in-place below after the array.
+      ,
+      {
+        id: 20, topic: "Graph features",
+        prompt: R`For \(y=2\sin(x)+1\), the range is:`,
+        choices: [R`\([-1,3]\)`, R`\([0,2]\)`, R`\([-2,2]\)`, R`\([1,2]\)`],
+        answerIndex: 0,
+        explanation: R`\(\sin x\in[-1,1]\Rightarrow 2\sin x\in[-2,2]\Rightarrow 2\sin x+1\in[-1,3]\).`
+      },
+      {
+        id: 21, topic: "Determine equation from features",
+        prompt: R`A sinusoidal function has amplitude \(4\), period \(2\pi\), centre line \(y=-1\), and no phase shift. Which equation matches?`,
+        choices: [R`\(y=4\sin x-1\)`, R`\(y=\sin(4x)-1\)`, R`\(y=4\sin(2x)-1\)`, R`\(y=-1\sin x+4\)`],
+        answerIndex: 0,
+        explanation: R`Amplitude \(4\Rightarrow |a|=4\). Period \(2\pi\Rightarrow b=1\). Vertical shift \(-1\Rightarrow d=-1\). So \(y=4\sin x-1\).`
+      },
+      {
+        id: 22, topic: "Determine equation from points",
+        prompt: R`The function \(y=a\cos x+d\) has maximum \(5\) and minimum \(-1\). Find \(a\) and \(d\).`,
+        choices: [R`\(a=3,\ d=2\)`, R`\(a=2,\ d=3\)`, R`\(a=4,\ d=1\)`, R`\(a=1,\ d=4\)`],
+        answerIndex: 0,
+        explanation: R`Centre line \(d=\dfrac{5+(-1)}{2}=2\). Amplitude \(|a|=\dfrac{5-(-1)}{2}=3\). So \(a=3,\ d=2\).`
+      },
+      {
+        id: 23, topic: "Period + shift",
+        prompt: R`Which function has period \(\pi\) and centre line \(y=0\)?`,
+        choices: [R`\(y=\sin(2x)\)`, R`\(y=\sin(\dfrac{x}{2})\)`, R`\(y=\sin(x-\pi)\)`, R`\(y=2\sin x\)`],
+        answerIndex: 0,
+        explanation: R`Period of \(\sin(bx)\) is \(\dfrac{2\pi}{|b|}\). For \(\pi\), need \(b=2\).`
+      },
+      {
+        id: 24, topic: "Range/transform",
+        prompt: R`The range of \(y=1-3\sin x\) is:`,
+        choices: [R`\([-2,4]\)`, R`\([-4,2]\)`, R`\([-3,1]\)`, R`\([-1,1]\)`],
+        answerIndex: 0,
+        explanation: R`\(\sin x\in[-1,1]\Rightarrow -3\sin x\in[-3,3]\Rightarrow 1-3\sin x\in[-2,4]\).`
+      },
+      {
+        id: 25, topic: "Zeros",
+        prompt: R`How many solutions does \(\cos x=0\) have in \([0,2\pi)\)?`,
+        choices: [R`0`, R`1`, R`2`, R`4`],
+        answerIndex: 2,
+        explanation: R`\(\cos x=0\) at \(x=\dfrac{\pi}{2}\) and \(x=\dfrac{3\pi}{2}\). So 2 solutions.`
+      },
+      {
+        id: 26, topic: "Graph reasoning",
+        prompt: R`A cosine graph has midline \(y=2\) and amplitude \(3\). What are its max and min values?`,
+        choices: [R`Max \(5\), min \(-1\)`, R`Max \(3\), min \(1\)`, R`Max \(2\), min \(-3\)`, R`Max \(6\), min \(0\)`],
+        answerIndex: 0,
+        explanation: R`Max \(=2+3=5\), min \(=2-3=-1\).`
+      },
+      {
+        id: 27, topic: "Modeling",
+        prompt: R`A Ferris wheel has radius \(12\) m and the centre is \(15\) m above the ground. The height \(h\) (m) can be modeled by \(h=12\sin(\omega t)+15\). What is the maximum height?`,
+        choices: [R`\(27\)`, R`\(15\)`, R`\(12\)`, R`\(3\)`],
+        answerIndex: 0,
+        explanation: R`Max \(=15+12=27\).`
+      },
+      {
+        id: 28, topic: "Modeling",
+        prompt: R`In \(h=12\sin(\omega t)+15\), what does the \(15\) represent?`,
+        choices: [R`Radius`, R`Amplitude`, R`Centre (midline) height`, R`Period`],
+        answerIndex: 2,
+        explanation: R`The \(+15\) is the vertical shift, which is the midline/centre height.`
+      },
+      {
+        id: 29, topic: "Solve using trig graph knowledge",
+        prompt: R`Solve in \([0,2\pi)\): \(\cos(2x)=\dfrac{1}{2}\).`,
+        choices: [
+          R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`,
+          R`\(x=\dfrac{\pi}{12},\,\dfrac{5\pi}{12},\,\dfrac{7\pi}{12},\,\dfrac{11\pi}{12}\)`,
+          R`\(x=\dfrac{\pi}{3},\,\dfrac{2\pi}{3}\)`,
+          R`\(x=\dfrac{\pi}{12},\,\dfrac{5\pi}{12}\)`
+        ],
+        answerIndex: 1,
+        explanation: R`\(\cos(2x)=\dfrac{1}{2}\Rightarrow 2x=\dfrac{\pi}{3},\,\dfrac{5\pi}{3}\) (mod \(2\pi\)).
+        In \([0,2\pi)\), \(2x=\dfrac{\pi}{3},\dfrac{5\pi}{3},\dfrac{7\pi}{3},\dfrac{11\pi}{3}\).
+        Divide by 2: \(x=\dfrac{\pi}{6},\dfrac{5\pi}{6},\dfrac{7\pi}{6},\dfrac{11\pi}{6}\).
+        (Equivalent list in option B is for a different equation; we correct this by replacing Q29 below.)`
+      }
+      // NOTE: Q29 options mismatched; we correct Q29 in-place below after the array.
+      ,
+
+      {
+        id: 30, topic: "Trig reasoning",
+        prompt: R`Solve in \([0,2\pi)\): \(\sin x + \cos x = 0\).`,
+        choices: [R`\(x=\dfrac{\pi}{4},\,\dfrac{5\pi}{4}\)`, R`\(x=\dfrac{3\pi}{4},\,\dfrac{7\pi}{4}\)`, R`\(x=\dfrac{\pi}{2},\,\dfrac{3\pi}{2}\)`, R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`],
+        answerIndex: 1,
+        explanation: R`\(\sin x = -\cos x\Rightarrow \tan x=-1\) (where \(\cos x\neq 0\)).
+        In \([0,2\pi)\), \(\tan x=-1\) at \(x=\dfrac{3\pi}{4}\) and \(x=\dfrac{7\pi}{4}\).`
+      },
+
+      // ===== Solving trig equations (31–45) =====
+      {
+        id: 31, topic: "Trig equation (quadratic in sin)",
+        prompt: R`Solve in \([0,2\pi)\): \(2\sin^{2}x-\sin x-1=0\).`,
+        choices: [
+          R`\(x=\dfrac{\pi}{2},\,\dfrac{3\pi}{2}\)`,
+          R`\(x=\dfrac{\pi}{2},\,\dfrac{7\pi}{6},\,\dfrac{11\pi}{6}\)`,
+          R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`,
+          R`\(x=\dfrac{7\pi}{6},\,\dfrac{11\pi}{6}\)`
+        ],
+        answerIndex: 1,
+        explanation: R`Let \(s=\sin x\). Then \(2s^2-s-1=0\Rightarrow (2s+1)(s-1)=0\).
+        So \(s=1\) or \(s=-\dfrac{1}{2}\).
+        \(\sin x=1\Rightarrow x=\dfrac{\pi}{2}\).
+        \(\sin x=-\dfrac{1}{2}\Rightarrow x=\dfrac{7\pi}{6},\dfrac{11\pi}{6}\).`
+      },
+      {
+        id: 32, topic: "Trig equation",
+        prompt: R`Solve in \([0,2\pi)\): \(\sin(2x)=0\).`,
+        choices: [R`\(x=0,\pi\)`, R`\(x=0,\dfrac{\pi}{2},\pi,\dfrac{3\pi}{2}\)`, R`\(x=\dfrac{\pi}{2},\dfrac{3\pi}{2}\)`, R`\(x=\dfrac{\pi}{4},\dfrac{3\pi}{4}\)`],
+        answerIndex: 1,
+        explanation: R`\(\sin(2x)=0\Rightarrow 2x=n\pi\Rightarrow x=\dfrac{n\pi}{2}\).
+        In \([0,2\pi)\): \(x=0,\dfrac{\pi}{2},\pi,\dfrac{3\pi}{2}\).`
+      },
+      {
+        id: 33, topic: "Trig equation",
+        prompt: R`Solve in degrees: \(\tan\theta= -1\) for \(0^{\circ}\le \theta<360^{\circ}\).`,
+        choices: [R`\(45^{\circ},225^{\circ}\)`, R`\(135^{\circ},315^{\circ}\)`, R`\(90^{\circ},270^{\circ}\)`, R`\(30^{\circ},210^{\circ}\)`],
+        answerIndex: 1,
+        explanation: R`\(\tan\theta=-1\) at reference \(45^{\circ}\) where tangent is negative (Quadrants II and IV):
+        \(135^{\circ}\) and \(315^{\circ}\).`
+      },
+      {
+        id: 34, topic: "Use identities",
+        prompt: R`Simplify: \(\dfrac{\sin x}{1+\cos x}\).`,
+        choices: [R`\(\tan x\)`, R`\(\dfrac{1-\cos x}{\sin x}\)`, R`\(\dfrac{1+\cos x}{\sin x}\)`, R`\(\cot x\)`],
+        answerIndex: 1,
+        explanation: R`Multiply top and bottom by \(1-\cos x\):
+        \[
+        \dfrac{\sin x}{1+\cos x}\cdot\dfrac{1-\cos x}{1-\cos x}
+        =\dfrac{\sin x(1-\cos x)}{1-\cos^2 x}
+        =\dfrac{\sin x(1-\cos x)}{\sin^2 x}
+        =\dfrac{1-\cos x}{\sin x}.
+        \]`
+      },
+      {
+        id: 35, topic: "Solve using identities",
+        prompt: R`Solve in \([0,2\pi)\): \(\cos x=\sin x\).`,
+        choices: [R`\(x=\dfrac{\pi}{4},\,\dfrac{5\pi}{4}\)`, R`\(x=\dfrac{3\pi}{4},\,\dfrac{7\pi}{4}\)`, R`\(x=\dfrac{\pi}{2},\,\dfrac{3\pi}{2}\)`, R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`],
+        answerIndex: 0,
+        explanation: R`\(\cos x=\sin x\Rightarrow \tan x=1\) (where \(\cos x\neq 0\)).
+        In \([0,2\pi)\): \(x=\dfrac{\pi}{4},\dfrac{5\pi}{4}\).`
+      },
+      {
+        id: 36, topic: "Solve with double angle idea",
+        prompt: R`Solve in \([0,2\pi)\): \(\cos(2x)=0\).`,
+        choices: [R`\(x=\dfrac{\pi}{2},\dfrac{3\pi}{2}\)`, R`\(x=\dfrac{\pi}{4},\dfrac{3\pi}{4},\dfrac{5\pi}{4},\dfrac{7\pi}{4}\)`, R`\(x=0,\pi\)`, R`\(x=\dfrac{\pi}{6},\dfrac{5\pi}{6}\)`],
+        answerIndex: 1,
+        explanation: R`\(\cos(2x)=0\Rightarrow 2x=\dfrac{\pi}{2}+n\pi\Rightarrow x=\dfrac{\pi}{4}+\dfrac{n\pi}{2}\).
+        In \([0,2\pi)\): \(\dfrac{\pi}{4},\dfrac{3\pi}{4},\dfrac{5\pi}{4},\dfrac{7\pi}{4}\).`
+      },
+      {
+        id: 37, topic: "General solution",
+        prompt: R`A general solution to \(\sin x=0\) is:`,
+        choices: [R`\(x=\dfrac{\pi}{2}+2\pi k\)`, R`\(x=\pi k\)`, R`\(x=\dfrac{\pi}{2}+\pi k\)`, R`\(x=2\pi k\)`],
+        answerIndex: 1,
+        explanation: R`\(\sin x=0\) at \(0,\pi,2\pi,\dots\Rightarrow x=\pi k\) for integer \(k\).`
+      },
+      {
+        id: 38, topic: "General solution",
+        prompt: R`A general solution to \(\cos x=0\) is:`,
+        choices: [R`\(x=\pi k\)`, R`\(x=\dfrac{\pi}{2}+\pi k\)`, R`\(x=2\pi k\)`, R`\(x=\dfrac{\pi}{4}+\pi k\)`],
+        answerIndex: 1,
+        explanation: R`\(\cos x=0\) at \(\dfrac{\pi}{2},\dfrac{3\pi}{2},\dots\Rightarrow x=\dfrac{\pi}{2}+\pi k\).`
+      },
+      {
+        id: 39, topic: "Exact solving",
+        prompt: R`Solve in \([0,2\pi)\): \(\cos x=-\dfrac{1}{2}\).`,
+        choices: [R`\(x=\dfrac{\pi}{3},\dfrac{5\pi}{3}\)`, R`\(x=\dfrac{2\pi}{3},\dfrac{4\pi}{3}\)`, R`\(x=\dfrac{\pi}{6},\dfrac{11\pi}{6}\)`, R`\(x=\dfrac{3\pi}{4},\dfrac{7\pi}{4}\)`],
+        answerIndex: 1,
+        explanation: R`\(\cos x=-\dfrac{1}{2}\) occurs at \(x=\dfrac{2\pi}{3}\) and \(x=\dfrac{4\pi}{3}\).`
+      },
+      {
+        id: 40, topic: "Equation with restricted domain",
+        prompt: R`Solve for \(x\) in \([0,\pi]\): \(\sin x=\dfrac{1}{2}\).`,
+        choices: [R`\(x=\dfrac{\pi}{6}\) only`, R`\(x=\dfrac{\pi}{6},\dfrac{5\pi}{6}\)`, R`\(x=\dfrac{5\pi}{6}\) only`, R`No solutions`],
+        answerIndex: 1,
+        explanation: R`In \([0,\pi]\), \(\sin x=\dfrac{1}{2}\) at \(x=\dfrac{\pi}{6}\) and \(x=\dfrac{5\pi}{6}\).`
+      },
+      {
+        id: 41, topic: "Verify identity idea",
+        prompt: R`Which expression is equivalent to \(\sin^2 x+\cos^2 x\)?`,
+        choices: [R`\(\tan^2 x\)`, R`\(\sec^2 x\)`, R`\(1\)`, R`\(\csc^2 x\)`],
+        answerIndex: 2,
+        explanation: R`Pythagorean identity: \(\sin^2 x+\cos^2 x=1\).`
+      },
+      {
+        id: 42, topic: "Identity simplification",
+        prompt: R`Simplify: \(\dfrac{\tan x}{\sec x}\).`,
+        choices: [R`\(\sin x\)`, R`\(\cos x\)`, R`\(\sec x\)`, R`\(\csc x\)`],
+        answerIndex: 0,
+        explanation: R`\(\dfrac{\tan x}{\sec x}=\dfrac{\frac{\sin x}{\cos x}}{\frac{1}{\cos x}}=\sin x\).`
+      },
+      {
+        id: 43, topic: "Solve (tougher: shift + factor)",
+        prompt: R`Solve in \([0,2\pi)\): \(\sin x=\sin\left(\dfrac{\pi}{6}\right)\).`,
+        choices: [
+          R`\(x=\dfrac{\pi}{6}\) only`,
+          R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`,
+          R`\(x=\dfrac{5\pi}{6}\) only`,
+          R`\(x=\dfrac{7\pi}{6},\,\dfrac{11\pi}{6}\)`
+        ],
+        answerIndex: 1,
+        explanation: R`\(\sin x=\sin\alpha\) in \([0,2\pi)\) gives \(x=\alpha\) or \(x=\pi-\alpha\).
+        Here \(\alpha=\dfrac{\pi}{6}\Rightarrow x=\dfrac{\pi}{6},\dfrac{5\pi}{6}\).`
+      },
+      {
+        id: 44, topic: "Solve (tougher: cosine symmetry)",
+        prompt: R`Solve in \([0,2\pi)\): \(\cos x=\cos\left(\dfrac{2\pi}{3}\right)\).`,
+        choices: [R`\(x=\dfrac{2\pi}{3},\,\dfrac{4\pi}{3}\)`, R`\(x=\dfrac{\pi}{3},\,\dfrac{5\pi}{3}\)`, R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6}\)`, R`\(x=\dfrac{\pi}{2},\,\dfrac{3\pi}{2}\)`],
+        answerIndex: 0,
+        explanation: R`\(\cos x=\cos\alpha\) gives \(x=\alpha\) or \(x=2\pi-\alpha\).
+        With \(\alpha=\dfrac{2\pi}{3}\Rightarrow x=\dfrac{2\pi}{3},\,\dfrac{4\pi}{3}\).`
+      },
+      {
+        id: 45, topic: "Trigonometric application (triangle)",
+        prompt: R`In \(\triangle ABC\), \(a=12\), \(A=40^{\circ}\), \(B=65^{\circ}\). Find \(b\) (nearest hundredth).`,
+        choices: [R`\(16.92\)`, R`\(14.88\)`, R`\(18.37\)`, R`\(15.72\)`],
+        answerIndex: 0,
+        explanation: R`Sine Law: \(\dfrac{a}{\sin A}=\dfrac{b}{\sin B}\Rightarrow b=a\dfrac{\sin B}{\sin A}\).
+        \(b=12\dfrac{\sin 65^{\circ}}{\sin 40^{\circ}}\approx 16.92\).`
+      },
+
+      // ===== Trig applications: sine/cosine law, area, height (46–50) =====
+      {
+        id: 46, topic: "Cosine Law",
+        prompt: R`In \(\triangle ABC\), \(b=9\), \(c=13\), \(A=52^{\circ}\). Find \(a\) (nearest hundredth).`,
+        choices: [R`\(10.29\)`, R`\(11.02\)`, R`\(9.48\)`, R`\(12.11\)`],
+        answerIndex: 0,
+        explanation: R`Cosine Law: \(a^2=b^2+c^2-2bc\cos A\).
+        \(a=\sqrt{9^2+13^2-2(9)(13)\cos52^{\circ}}\approx 10.29\).`
+      },
+      {
+        id: 47, topic: "Ambiguous SSA",
+        prompt: R`In an SSA case, \(A=30^{\circ}\), \(a=10\), \(b=14\). How many triangles are possible?`,
+        choices: [R`0`, R`1`, R`2`, R`Infinitely many`],
+        answerIndex: 2,
+        explanation: R`Compute \(h=b\sin A=14\sin30^{\circ}=7\). Since \(h<a<b\) (\(7<10<14\)), there are exactly 2 triangles.`
+      },
+      {
+        id: 48, topic: "Area using trig",
+        prompt: R`Find the area of a triangle with sides \(8\) and \(11\) and included angle \(35^{\circ}\) (nearest hundredth).`,
+        choices: [R`\(25.24\)`, R`\(22.94\)`, R`\(30.97\)`, R`\(18.56\)`],
+        answerIndex: 0,
+        explanation: R`Area \(=\dfrac{1}{2}ab\sin C=\dfrac{1}{2}(8)(11)\sin35^{\circ}\approx 25.24\).`
+      },
+      {
+        id: 49, topic: "Angle of elevation",
+        prompt: R`A student stands \(50\) m from a building. The angle of elevation to the top is \(38^{\circ}\). Approximate the building height (m).`,
+        choices: [R`\(39.06\)`, R`\(31.51\)`, R`\(50.00\)`, R`\(64.02\)`],
+        answerIndex: 0,
+        explanation: R`Right triangle: \(\tan 38^{\circ}=\dfrac{h}{50}\Rightarrow h=50\tan38^{\circ}\approx 39.06\).`
+      },
+      {
+        id: 50, topic: "Sinusoidal modeling",
+        prompt: R`A sinusoidal function has period \(12\) seconds. What is its angular frequency \(\omega\) (rad/s) if \(y=\sin(\omega t)\)?`,
+        choices: [R`\(\dfrac{\pi}{6}\)`, R`\(\dfrac{\pi}{12}\)`, R`\(\dfrac{6}{\pi}\)`, R`\(\dfrac{12}{\pi}\)`],
+        answerIndex: 0,
+        explanation: R`Period \(T=\dfrac{2\pi}{\omega}\Rightarrow \omega=\dfrac{2\pi}{T}=\dfrac{2\pi}{12}=\dfrac{\pi}{6}\).`
+      },
+
+      // ===== Sequences & Series (Geometric focus) (51–60) =====
+      {
+        id: 51, topic: "Geometric sequences",
+        prompt: R`Determine the common ratio of the sequence \(8,12,18,27,\dots\)`,
+        choices: [R`\(\dfrac{3}{2}\)`, R`\(\dfrac{2}{3}\)`, R`\(\dfrac{4}{3}\)`, R`\(\dfrac{5}{2}\)`],
+        answerIndex: 0,
+        explanation: R`Common ratio \(r=\dfrac{12}{8}=\dfrac{3}{2}\) (also \(18/12=3/2\)).`
+      },
+      {
+        id: 52, topic: "Geometric sequences",
+        prompt: R`For the geometric sequence with \(a_1=6\) and \(r=2\), which term equals \(6144\)?`,
+        choices: [R`10th`, R`11th`, R`12th`, R`13th`],
+        answerIndex: 1,
+        explanation: R`\(a_n=6\cdot 2^{n-1}=6144\Rightarrow 2^{n-1}=1024=2^{10}\Rightarrow n-1=10\Rightarrow n=11\).`
+      },
+      {
+        id: 53, topic: "Geometric sequences",
+        prompt: R`Find the 9th term of the geometric sequence \(5000,2500,1250,\dots\)`,
+        choices: [R`\(39.0625\)`, R`\(19.53125\)`, R`\(78.125\)`, R`\(156.25\)`],
+        answerIndex: 0,
+        explanation: R`\(a_1=5000\), \(r=\dfrac{1}{2}\). \(a_9=5000\left(\dfrac{1}{2}\right)^8=\dfrac{5000}{256}=19.53125\). (So answer should be 19.53125.)`
+      }
+      // NOTE: Q53 computed correctly is 19.53125. We'll correct it below after array.
+      ,
+      {
+        id: 54, topic: "Geometric series (finite sum)",
+        prompt: R`Compute \(S_6\) for the geometric series \(3+6+12+\dots\) (6 terms).`,
+        choices: [R`\(189\)`, R`\(186\)`, R`\(183\)`, R`\(192\)`],
+        answerIndex: 1,
+        explanation: R`Here \(a_1=3\), \(r=2\), \(n=6\).
+        \(S_n=a_1\dfrac{r^n-1}{r-1}=3\dfrac{2^6-1}{1}=3(63)=189\). (So answer should be 189.)`
+      }
+      // NOTE: Q54 sum is 189; fix below.
+      ,
+      {
+        id: 55, topic: "Infinite geometric series",
+        prompt: R`Find the sum of the infinite series \(3+1.5+0.75+\dots\)`,
+        choices: [R`\(6\)`, R`\(5\)`, R`\(4.5\)`, R`No finite sum`],
+        answerIndex: 0,
+        explanation: R`\(a=3\), \(r=\dfrac{1}{2}\) with \(|r|<1\).
+        \(S_{\infty}=\dfrac{a}{1-r}=\dfrac{3}{1-\frac{1}{2}}=6\).`
+      },
+      {
+        id: 56, topic: "Infinite geometric series (condition)",
+        prompt: R`For what values of \(r\) does an infinite geometric series have a finite sum?`,
+        choices: [R`\(|r|<1\)`, R`\(|r|>1\)`, R`\(r\ge 1\)`, R`All real \(r\)`],
+        answerIndex: 0,
+        explanation: R`An infinite geometric series converges only when \(|r|<1\).`
+      },
+      {
+        id: 57, topic: "Sigma notation",
+        prompt: R`Evaluate \(\displaystyle \sum_{k=0}^{4} 2\cdot 3^{k}\).`,
+        choices: [R`\(242\)`, R`\(240\)`, R`\(244\)`, R`\(162\)`],
+        answerIndex: 0,
+        explanation: R`Compute: \(2(3^0+3^1+3^2+3^3+3^4)=2(1+3+9+27+81)=2(121)=242\).`
+      },
+      {
+        id: 58, topic: "Exponential decay sequence",
+        prompt: R`An aquarium contains \(30\) L and loses \(6\%\) each day. The sequence of litres remaining is:`,
+        choices: [
+          R`\(30,\ 30(0.94),\ 30(0.94)^2,\ 30(0.94)^3,\dots\)`,
+          R`\(30,\ 30(0.06),\ 30(0.06)^2,\dots\)`,
+          R`\(30,\ 30(1.06),\ 30(1.06)^2,\dots\)`,
+          R`\(30,\ \dfrac{30}{0.94},\ \dfrac{30}{0.94^2},\dots\)`
+        ],
+        answerIndex: 0,
+        explanation: R`Losing 6% means multiply by \(1-0.06=0.94\) each day: \(30(0.94)^n\).`
+      },
+      {
+        id: 59, topic: "Bouncing ball (infinite series)",
+        prompt: R`A ball is dropped from \(4\) m. Each bounce reaches \(70\%\) of the previous height. Total vertical distance (m) before it stops is:`,
+        choices: [R`\(22.67\)`, R`\(18.67\)`, R`\(26.67\)`, R`\(14.00\)`],
+        answerIndex: 0,
+        explanation: R`Distance \(=4 + 2(4\cdot0.7+4\cdot0.7^2+\cdots)\).
+        The bounce sum is geometric: \(4\cdot0.7 + 4\cdot0.7^2+\cdots =4\cdot\dfrac{0.7}{1-0.7}=\dfrac{2.8}{0.3}=9.333\ldots\).
+        Total \(=4+2(9.333\ldots)=22.666\ldots\approx 22.67\).`
+      },
+      {
+        id: 60, topic: "Geometric series (finance)",
+        prompt: R`A salary starts at \(\$40{,}000\) and increases by \(3\%\) each year. What is the total earned over 3 years?`,
+        choices: [R`\(\$123{,}600\)`, R`\(\$123{,}640\)`, R`\(\$120{,}000\)`, R`\(\$124{,}000\)`],
+        answerIndex: 1,
+        explanation: R`Year 1: \(40000\). Year 2: \(40000(1.03)=41200\). Year 3: \(40000(1.03)^2=42436\).
+        Total \(=40000+41200+42436=123636\approx \$123{,}640\) (nearest).`
+      }
+    ];
+
+    // ---------------------------
+    // FIXES (a few items corrected after careful re-check)
+    // ---------------------------
+
+    // Fix Q5: tan(3π/4) = -1
+    const i5 = questions.findIndex(q => q.id === 5);
+    questions[i5].answerIndex = 0;
+    questions[i5].explanation = R`\(\dfrac{3\pi}{4}=135^{\circ}\) (Quadrant II). Reference angle \(45^{\circ}\).
+    \(\sin>0\), \(\cos<0\Rightarrow \tan<0\). So \(\tan\left(\dfrac{3\pi}{4}\right)=-1\).`;
+
+    // Fix Q19 maximum/minimum question: maximum is -3
+    const i19 = questions.findIndex(q => q.id === 19);
+    questions[i19] = {
+      id: 19, topic: "Transformations",
+      prompt: R`The maximum value of \(y=-2\cos(3x)-5\) is:`,
+      choices: [R`\(-3\)`, R`\(-5\)`, R`\(-7\)`, R`\(3\)`],
+      answerIndex: 0,
+      explanation: R`\(\cos(3x)\in[-1,1]\Rightarrow -2\cos(3x)\in[-2,2]\).
+      Then \(-2\cos(3x)-5\in[-7,-3]\). Maximum is \(-3\).`
+    };
+
+    // Fix Q29: Provide correct option list for cos(2x)=1/2 in [0,2π)
+    const i29 = questions.findIndex(q => q.id === 29);
+    questions[i29] = {
+      id: 29, topic: "Trig equation (multiple solutions)",
+      prompt: R`Solve in \([0,2\pi)\): \(\cos(2x)=\dfrac{1}{2}\).`,
+      choices: [
+        R`\(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6},\,\dfrac{7\pi}{6},\,\dfrac{11\pi}{6}\)`,
+        R`\(x=\dfrac{\pi}{3},\,\dfrac{5\pi}{3}\)`,
+        R`\(x=\dfrac{\pi}{12},\,\dfrac{5\pi}{12}\)`,
+        R`\(x=\dfrac{2\pi}{3},\,\dfrac{4\pi}{3}\)`
+      ],
+      answerIndex: 0,
+      explanation: R`\(\cos(2x)=\dfrac{1}{2}\Rightarrow 2x=\dfrac{\pi}{3},\,\dfrac{5\pi}{3}\) (mod \(2\pi\)).
+      In \([0,4\pi)\): \(2x=\dfrac{\pi}{3},\dfrac{5\pi}{3},\dfrac{7\pi}{3},\dfrac{11\pi}{3}\).
+      Divide by 2: \(x=\dfrac{\pi}{6},\,\dfrac{5\pi}{6},\,\dfrac{7\pi}{6},\,\dfrac{11\pi}{6}\).`
+    };
+
+    // Fix Q53: a9 = 19.53125
+    const i53 = questions.findIndex(q => q.id === 53);
+    questions[i53] = {
+      id: 53, topic: "Geometric sequences",
+      prompt: R`Find the 9th term of the geometric sequence \(5000,2500,1250,\dots\)`,
+      choices: [R`\(19.53125\)`, R`\(39.0625\)`, R`\(78.125\)`, R`\(156.25\)`],
+      answerIndex: 0,
+      explanation: R`\(a_1=5000\), \(r=\dfrac{1}{2}\).
+      \(a_9=5000\left(\dfrac{1}{2}\right)^{8}=\dfrac{5000}{256}=19.53125\).`
+    };
+
+    // Fix Q54: S6 = 189
+    const i54 = questions.findIndex(q => q.id === 54);
+    questions[i54] = {
+      id: 54, topic: "Geometric series (finite sum)",
+      prompt: R`Compute \(S_6\) for the geometric series \(3+6+12+\dots\) (6 terms).`,
+      choices: [R`\(189\)`, R`\(186\)`, R`\(183\)`, R`\(192\)`],
+      answerIndex: 0,
+      explanation: R`Here \(a_1=3\), \(r=2\), \(n=6\).
+      \(S_n=a_1\dfrac{r^n-1}{r-1}=3\dfrac{2^6-1}{1}=3(63)=189\).`
+    };
+
+    // ---------------------------
+    // APP STATE + UI LOGIC
+    // ---------------------------
+    let currentIndex = 0;
+    let correct = 0;
+    let attempted = 0;
+    let answeredThisQ = false;
+    const LS_KEY = "g12_final_quiz_progress_v1";
+
+    const homeEl = document.getElementById("home");
+    const quizEl = document.getElementById("quiz");
+    const finishEl = document.getElementById("finish");
+
+    const correctCountEl = document.getElementById("correctCount");
+    const attemptedCountEl = document.getElementById("attemptedCount");
+    const qCounterEl = document.getElementById("qCounter");
+
+    const qTitleEl = document.getElementById("qTitle");
+    const qTopicEl = document.getElementById("qTopic");
+    const qPromptEl = document.getElementById("qPrompt");
+    const choicesEl = document.getElementById("choices");
+
+    const acceptBtn = document.getElementById("acceptBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const backHomeBtn = document.getElementById("backHomeBtn");
+
+    const feedbackEl = document.getElementById("feedback");
+    const fbTitleEl = document.getElementById("fbTitle");
+    const fbBodyEl = document.getElementById("fbBody");
+
+    const startQInput = document.getElementById("startQ");
+    const startCorrectInput = document.getElementById("startCorrect");
+    const startAttemptedInput = document.getElementById("startAttempted");
+    const beginBtn = document.getElementById("beginBtn");
+
+    const resumeBtn = document.getElementById("resumeBtn");
+    const resetSavedBtn = document.getElementById("resetSavedBtn");
+
+    const saveLink = document.getElementById("saveLink");
+    const loadLink = document.getElementById("loadLink");
+    const restartLink = document.getElementById("restartLink");
+
+    const finalCorrectEl = document.getElementById("finalCorrect");
+    const finalAttemptedEl = document.getElementById("finalAttempted");
+    const restartBtn = document.getElementById("restartBtn");
+    const finishHomeBtn = document.getElementById("finishHomeBtn");
+
+    function show(el){
+      homeEl.style.display = "none";
+      quizEl.style.display = "none";
+      finishEl.style.display = "none";
+      el.style.display = "block";
+    }
+    function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+
+    function updateScoreUI(){
+      correctCountEl.textContent = String(correct);
+      attemptedCountEl.textContent = String(attempted);
+      qCounterEl.textContent = `${questions[currentIndex].id} / ${questions.length}`;
+    }
+
+    function clearFeedback(){
+      feedbackEl.style.display = "none";
+      feedbackEl.classList.remove("ok", "no");
+      fbTitleEl.textContent = "";
+      fbBodyEl.innerHTML = "";
+    }
+
+    function renderQuestion(){
+      answeredThisQ = false;
+      clearFeedback();
+      continueBtn.disabled = true;
+      acceptBtn.disabled = false;
+
+      const q = questions[currentIndex];
+      qTitleEl.textContent = `Question ${q.id}`;
+      qTopicEl.textContent = q.topic ? `Topic: ${q.topic}` : "";
+      qPromptEl.innerHTML = q.prompt;
+
+      choicesEl.innerHTML = "";
+      const letters = ["A","B","C","D"];
+      q.choices.forEach((choiceText, i) => {
+        const wrap = document.createElement("label");
+        wrap.className = "choice";
+        wrap.innerHTML = `
+          <input type="radio" name="choice" value="${i}">
+          <div class="letter">${letters[i]})</div>
+          <div class="text">${choiceText}</div>
+        `;
+        choicesEl.appendChild(wrap);
+      });
+
+      updateScoreUI();
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([qPromptEl, choicesEl]).catch(() => {});
+      }
+    }
+
+    function getSelectedIndex(){
+      const sel = document.querySelector('input[name="choice"]:checked');
+      return sel ? Number(sel.value) : null;
+    }
+
+    function lockChoices(){
+      document.querySelectorAll('input[name="choice"]').forEach(inp => inp.disabled = true);
+      acceptBtn.disabled = true;
+    }
+
+    function showFeedback(isCorrect, q){
+      feedbackEl.style.display = "block";
+      feedbackEl.classList.toggle("ok", isCorrect);
+      feedbackEl.classList.toggle("no", !isCorrect);
+
+      const letters = ["A","B","C","D"];
+      const correctLetter = letters[q.answerIndex];
+
+      fbTitleEl.textContent = isCorrect ? "Correct ✅" : "Not quite ❌";
+      fbBodyEl.innerHTML = `
+        <div><b>Correct answer:</b> ${correctLetter}</div>
+        <div style="margin-top:8px;">${q.explanation}</div>
+      `;
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([feedbackEl]).catch(() => {});
+      }
+    }
+
+    function goNext(){
+      currentIndex++;
+      if (currentIndex >= questions.length){
+        finalCorrectEl.textContent = String(correct);
+        finalAttemptedEl.textContent = String(attempted);
+        show(finishEl);
+        return;
+      }
+      renderQuestion();
+    }
+
+    function startFromHome(){
+      const startQ = clamp(Number(startQInput.value || 1), 1, questions.length);
+      const startCorrect = Math.max(0, Number(startCorrectInput.value || 0));
+      let startAttempted = Number(startAttemptedInput.value || 0);
+      if (!Number.isFinite(startAttempted) || startAttempted < startCorrect) startAttempted = startCorrect;
+
+      correct = Math.floor(startCorrect);
+      attempted = Math.floor(startAttempted);
+
+      currentIndex = questions.findIndex(q => q.id === startQ);
+      if (currentIndex < 0) currentIndex = 0;
+
+      show(quizEl);
+      renderQuestion();
+    }
+
+    function saveProgress(){
+      const payload = { currentId: questions[currentIndex].id, correct, attempted };
+      localStorage.setItem(LS_KEY, JSON.stringify(payload));
+      alert("Progress saved.");
+      refreshSavedButtons();
+    }
+
+    function loadProgress(){
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) { alert("No saved progress found."); return; }
+      try{
+        const data = JSON.parse(raw);
+        const idx = questions.findIndex(q => q.id === data.currentId);
+        currentIndex = idx >= 0 ? idx : 0;
+        correct = Number.isFinite(data.correct) ? data.correct : 0;
+        attempted = Number.isFinite(data.attempted) ? data.attempted : 0;
+        show(quizEl);
+        renderQuestion();
+      } catch(e){
+        alert("Saved progress was corrupted.");
+      }
+    }
+
+    function clearSaved(){
+      localStorage.removeItem(LS_KEY);
+      alert("Saved progress cleared.");
+      refreshSavedButtons();
+    }
+
+    function refreshSavedButtons(){
+      const hasSaved = !!localStorage.getItem(LS_KEY);
+      resumeBtn.style.display = hasSaved ? "inline-block" : "none";
+      resetSavedBtn.style.display = hasSaved ? "inline-block" : "none";
+    }
+
+    // Events
+    beginBtn.addEventListener("click", startFromHome);
+    resumeBtn.addEventListener("click", loadProgress);
+    resetSavedBtn.addEventListener("click", clearSaved);
+
+    acceptBtn.addEventListener("click", () => {
+      if (answeredThisQ) return;
+
+      const selected = getSelectedIndex();
+      if (selected === null){
+        alert("Please select an answer first.");
+        return;
+      }
+
+      const q = questions[currentIndex];
+      attempted += 1;
+      const isCorrect = (selected === q.answerIndex);
+      if (isCorrect) correct += 1;
+
+      answeredThisQ = true;
+      lockChoices();
+      showFeedback(isCorrect, q);
+      updateScoreUI();
+      continueBtn.disabled = false;
+    });
+
+    continueBtn.addEventListener("click", goNext);
+
+    backHomeBtn.addEventListener("click", () => {
+      show(homeEl);
+      refreshSavedButtons();
+      updateScoreUI();
+    });
+
+    saveLink.addEventListener("click", saveProgress);
+    loadLink.addEventListener("click", loadProgress);
+
+    restartLink.addEventListener("click", () => {
+      correct = 0; attempted = 0; currentIndex = 0;
+      show(quizEl);
+      renderQuestion();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      correct = 0; attempted = 0; currentIndex = 0;
+      show(quizEl);
+      renderQuestion();
+    });
+
+    finishHomeBtn.addEventListener("click", () => {
+      show(homeEl);
+      refreshSavedButtons();
+    });
+
+    // Init
+    show(homeEl);
+    refreshSavedButtons();
+    updateScoreUI();
+  </script>
+</body>
+</html>
